@@ -1,9 +1,0 @@
-git pull
-
-
-git add .
-
-
-git commit -am "changes"
-
-git pushS
