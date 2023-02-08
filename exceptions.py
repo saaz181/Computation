@@ -26,3 +26,8 @@ class SymbolMisMatchException(AutomatonException):
 class ElementNotInTable(Exception):
     """if an element is not in table"""
     pass
+
+
+class StackRegexException(Exception):
+    """The Processing Stack is empty"""
+    pass
