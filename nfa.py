@@ -1,4 +1,4 @@
-from dfa import DFA
+import dfa as dfa_module
 import Regex
 
 
@@ -10,7 +10,7 @@ class NFA:
         self.initial_state = initial_state
         self.final_states = final_states
 
-    def get_next_state(self, states, input_symbol, frozen_set=False):
+    def get_next_state(self, states, input_symbol):
         transition_set = set()
         for state in states:
             if type(state) == set or type(state) == list or type(state) == frozenset:
@@ -120,6 +120,7 @@ class NFA:
 
         return new_transition, new_final_states
 
+    # for regex
     def getEClose(self, _state):
         all_states = set()
         states = set([_state])
@@ -132,7 +133,8 @@ class NFA:
                         states.add(tns)
         return all_states
 
-    def nfa_to_dfa(self) -> DFA:
+    # for regex
+    def nfa_to_dfa(self):
         # https://www.javatpoint.com/automata-conversion-from-nfa-with-null-to-dfa
 
         all_states = dict()
@@ -140,7 +142,7 @@ class NFA:
         count = 1
         state1 = self._compute_lambda_closure(self.initial_state)
         eclose[self.initial_state] = state1
-        dfa = DFA(set(), self.inputs, dict(), set(), set())
+        dfa = dfa_module.DFA(set(), self.inputs, dict(), set(), set())
         dfa.initial_state = count
         states = [[state1, count]]
         all_states[count] = state1
@@ -201,6 +203,7 @@ class NFA:
             for state in to_states:
                 self.add_transition(from_state, state, to_states[state])
 
+    # for regex transition
     def build_from_number(self, start_num):
         translations = dict()
         for i in list(self.states):
