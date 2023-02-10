@@ -6,6 +6,7 @@ from MinimizationTable import MinimizationTable
 import Regex
 import dfa_to_regex
 
+
 # https://stackoverflow.com/questions/28237955/same-name-for-classmethod-and-instancemethod
 class hybridmethod:
     def __init__(self, fclass, finstance=None, doc=None):
@@ -53,8 +54,10 @@ class DFA:
         G = nx.DiGraph()
         for state in self.states:
             for alphabet in self.inputs:
-                target_state = self.transitions.get(state).get(alphabet)
-                G.add_edge(state, target_state)
+                target_state = self.transitions.get(state)
+                if target_state is not None:
+                    target_state = target_state.get(alphabet)
+                    G.add_edge(state, target_state)
 
         return G
 
@@ -79,10 +82,11 @@ class DFA:
             except IndexError:
                 break
 
-            for next_state in self.transitions.get(state).values():
-                if next_state not in visited_state:
-                    visited_state.add(next_state)
-                    states.append(next_state)
+            if self.transitions.get(state) is not None:
+                for next_state in self.transitions.get(state).values():
+                    if next_state not in visited_state:
+                        visited_state.add(next_state)
+                        states.append(next_state)
 
         return visited_state
 
@@ -109,6 +113,7 @@ class DFA:
                 for word_length in range(smallest_word_length, maximum_word_length + 1):
                     for final_state in self.final_states:
                         paths = nx.all_simple_paths(dfa_graph, self.initial_state, final_state)
+
                         for path in paths:
                             if len(path) == word_length:
                                 count += 1
@@ -121,25 +126,23 @@ class DFA:
             raise exceptions.InfiniteLanguageException('The Language accepted by DFA is infinite')
 
     def shortest_word_length(self):
-        if self.is_finite():
-            dfa_graph = self._construct_dfa_graph()
-            shortest_path = []
-            for final_state in self.final_states:
+        dfa_graph = self._construct_dfa_graph()
+        shortest_path = []
+        for final_state in self.final_states:
 
-                try:
-                    path_length = nx.shortest_path_length(dfa_graph, self.initial_state, final_state)
-                    shortest_path.append(path_length)
+            try:
+                path_length = nx.shortest_path_length(dfa_graph, self.initial_state, final_state)
+                shortest_path.append(path_length)
 
-                except nx.NetworkXNoPath:
-                    print(f'Path from {self.initial_state} -> {final_state} is not Found!')
-                    pass
+            except nx.NetworkXNoPath:
+                print(f'Path from {self.initial_state} -> {final_state} is not Found!')
+                pass
 
-                except nx.NodeNotFound:
-                    print('node are not added properly to graph')
-                    pass
+            except nx.NodeNotFound:
+                print('node are not added properly to graph')
+                pass
 
-            return min(shortest_path)
-        return 'The Language is not Finite'
+        return min(shortest_path)
 
     def longest_word_length(self):
         if self.is_finite():
@@ -148,8 +151,13 @@ class DFA:
             for final_state in self.final_states:
 
                 try:
-                    path_length = nx.dag_longest_path_length(dfa_graph, self.initial_state, final_state)
-                    longest_path.append(path_length)
+                    try:
+                        path_length = nx.dag_longest_path_length(dfa_graph, self.initial_state, final_state)
+                        longest_path.append(path_length)
+                    except:
+                        longest_path.append(
+                            len(list(nx.all_simple_paths(dfa_graph, self.initial_state, final_state))[0])
+                        )
 
                 except nx.NetworkXNoPath:
                     print(f'Path from {self.initial_state} -> {final_state} is not Found!')
@@ -550,4 +558,15 @@ class DFA:
 
 
 if __name__ == '__main__':
-    pass
+    dfa = DFA(
+        states={'q0', 'q1', 'q2'},
+        inputs={'a', 'b'},
+        transitions={
+            'q0': {'a': 'q1', 'b': 'q1'},
+            'q1': {'a': 'q2', 'b': 'q2'},
+        },
+        initial_state='q0',
+        final_states={'q2'}
+    )
+
+    print(dfa.__len__())

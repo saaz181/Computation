@@ -178,17 +178,3 @@ class MinimizationTable:
                 minimized_set_of_states.append({state})
 
         return minimized_set_of_states
-
-
-
-
-
-
-
-# a = {'q0', 'q1', 'q2', 'q3', 'q4', 'q5'}
-# # f = {'q0', 'q1'}
-# mms = {('q7', 'q6'): False, ('q2', 'q1'): False, ('q2', 'q5'): False, ('q4', 'q8'): False, ('q4', 'q3'): False, ('q8', 'q3'): False, ('q1', 'q5'): False}
-# mt = MinimizationTable(a)
-# res = mt.bind_minimized_states(list(mms.keys()))
-# print(res)
-

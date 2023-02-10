@@ -1,7 +1,7 @@
-from unittest import TestCase
+from unittest import TestCase, expectedFailure
 import dfa
-import itertools
-
+import unittest
+import exceptions
 
 
 class Phase1Test(TestCase):
@@ -48,4 +48,25 @@ class Phase1Test(TestCase):
     def test_is_finite(self):
         self.assertEqual(self.dfa.is_finite(), self.is_finite)
 
-    def
+    @expectedFailure
+    def test_length_infinite_language(self):
+        length = 1
+        self.assertEqual(self.dfa.__len__(), length)
+
+    def test_length_finite_language(self):
+        if not self.dfa.is_finite():
+            self.skipTest('The Language is Not Finite')
+        length = 2
+        self.assertEqual(self.dfa.__len__(), length)
+
+    def test_calc_shortest_word(self):
+        shortest_word = 1
+        self.assertEqual(self.dfa.shortest_word_length(), shortest_word)
+
+    def test_longest_word(self):
+        if not self.dfa.is_finite():
+            self.skipTest('The Language is Not Finite')
+        pass
+
+    def test_complement(self):
+        pass
